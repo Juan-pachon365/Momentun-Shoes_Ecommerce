@@ -1,0 +1,26 @@
+.price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.final {
+  font-weight: 800;
+}
+
+.original {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  font-size: 0.85em;
+}
+
+.off {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85em;
+}
+
+.sm .final { font-size: 1rem; }
+.md .final { font-size: 1.15rem; }
+.lg .final { font-size: 1.9rem; }

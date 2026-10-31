@@ -1,0 +1,40 @@
+.wrap {
+  min-height: calc(100vh - var(--header-h) - 260px);
+  display: grid;
+  place-items: center;
+  padding: 48px 16px 72px;
+}
+
+.box {
+  width: 100%;
+  max-width: 440px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.foot {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+
+  a { color: var(--accent); font-weight: 700; }
+}
+
+.forgot {
+  display: block;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: -8px 0 18px;
+}

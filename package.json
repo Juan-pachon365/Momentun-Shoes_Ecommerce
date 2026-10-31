@@ -1,0 +1,23 @@
+{
+  "name": "ecommerce-front",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
+    "next": "14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sass": "^1.104.1"
+  },
+  "devDependencies": {
+    "cloudinary": "^2.11.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.5"
+  }
+}

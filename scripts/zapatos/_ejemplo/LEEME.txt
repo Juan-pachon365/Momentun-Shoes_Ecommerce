@@ -1,0 +1,16 @@
+Plantilla para agregar un zapato.
+
+1. Copia esta carpeta con otro nombre, por ejemplo: scripts\zapatos\vans-old-skool
+2. Llena zapato.json:
+   - name: nombre que se ve en la tienda (en mayúsculas, como los demás)
+   - brand: adidas, all-stars, nike, puma, skechers o vans
+   - category: casual, deportivo, formal o infantil
+   - price: precio en pesos, sin puntos ni comillas (85000)
+   - discount: porcentaje de descuento, 0 si no tiene
+   - sizes: talla y stock ("38": 5)
+   - uid (opcional): la dirección del producto. Si no lo pones, se arma con el nombre.
+3. Pon las fotos en la carpeta: cover.jpg (obligatoria), wallpaper.jpg y gallery-1.jpg, gallery-2.jpg... (opcionales)
+4. Prueba:  node scripts/agregar-zapato.mjs scripts/zapatos/vans-old-skool --prueba
+5. Créalo:  node scripts/agregar-zapato.mjs scripts/zapatos/vans-old-skool
+
+Esta carpeta _ejemplo no tiene fotos: es solo la plantilla.

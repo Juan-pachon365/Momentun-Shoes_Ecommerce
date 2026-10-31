@@ -1,0 +1,15 @@
+{
+  "name": "VANS OLD SKOOL",
+  "brand": "vans",
+  "category": "casual",
+  "price": 85000,
+  "discount": 0,
+  "description": "Las Vans Old Skool son un clásico del skate con su franja lateral característica. Cómodas, resistentes y fáciles de combinar para el día a día.",
+  "sizes": {
+    "36": 5,
+    "37": 5,
+    "38": 5,
+    "39": 5,
+    "40": 5
+  }
+}

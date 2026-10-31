@@ -1,0 +1,25 @@
+.empty {
+  text-align: center;
+  padding: 56px 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  h3 { font-size: 1.3rem; }
+  p { color: var(--text-muted); max-width: 420px; margin-bottom: 8px; }
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+
+  svg { width: 28px; height: 28px; }
+}

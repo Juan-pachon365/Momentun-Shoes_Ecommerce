@@ -1,0 +1,42 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  transition: color 0.15s, background 0.15s, border-color 0.15s, transform 0.1s;
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.floating {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #222;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+
+  svg { width: 20px; height: 20px; }
+
+  &:hover { color: var(--accent); }
+  &.active { color: var(--accent); }
+}
+
+.inline {
+  min-height: 52px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-weight: 700;
+
+  &:hover { border-color: var(--text); }
+  &.active {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+}

@@ -1,0 +1,21 @@
+// Paleta Momentum: morado intenso, morados oscuros, lavanda, blanco y negro violáceo.
+// Los componentes usan las variables CSS definidas en global.scss.
+$primary: #5414fd;        // morado intenso (botones, rellenos)
+$primary-hover: #6a35ff;
+$accent: #a98bff;         // lavanda (textos, íconos y bordes destacados sobre fondo oscuro)
+$accent-strong: #8b6dff;
+
+$text-primary: #f4f1fa;
+$text-secondary: #a39cb4;
+$text-soft: #d6d0e2;
+
+$border-primary: #2a2238;
+$border-secondary: #3b3150;
+
+$background-primary: #17121f;   // tarjetas y paneles
+$background-secondary: #0d0a13; // fondo de la página
+$background-tertiary: #0a0810;  // campos y zonas hundidas
+$background-elevated: #1f182b;
+
+$success: #69af00;
+$danger: #ff0a4e;

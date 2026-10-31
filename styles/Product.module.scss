@@ -1,0 +1,250 @@
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+
+  a { color: var(--text-muted); }
+  a:hover { color: var(--text); }
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+.gallery {
+  position: sticky;
+  top: calc(var(--header-h) + 48px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 900px) { position: static; }
+}
+
+.mainImage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--bg-image);
+  border-radius: var(--radius);
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.wishFloat {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.thumbs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.thumb {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+  background: var(--bg-image);
+  opacity: 0.65;
+  transition: opacity 0.15s, border-color 0.15s;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+
+  &:hover { opacity: 1; }
+}
+
+.thumbActive {
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.sizeBlock {
+  margin-top: 12px;
+}
+
+.sizeHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  h2 {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+}
+
+.lowStock {
+  color: var(--warning);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.sizes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+  gap: 8px;
+}
+
+.size {
+  height: 50px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  font-weight: 700;
+  font-size: 1rem;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover:not(:disabled) { border-color: var(--text); }
+
+  &:disabled {
+    opacity: 0.35;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+}
+
+.sizeActive {
+  background: var(--text) !important;
+  color: #111 !important;
+  border-color: var(--text) !important;
+}
+
+.error {
+  color: #ff7c9e;
+  font-size: 0.88rem;
+  margin-top: 8px;
+}
+
+.buy {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  height: 52px;
+
+  button {
+    width: 44px;
+    height: 100%;
+    background: none;
+    border: none;
+    display: grid;
+    place-items: center;
+
+    svg { width: 18px; height: 18px; }
+    &:disabled { opacity: 0.3; cursor: not-allowed; }
+  }
+
+  span {
+    min-width: 28px;
+    text-align: center;
+    font-weight: 700;
+  }
+}
+
+.addBtn {
+  flex: 1;
+  min-height: 52px;
+  font-size: 1rem;
+}
+
+.soldOut {
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  text-align: center;
+  font-weight: 600;
+}
+
+.perks {
+  list-style: none;
+  padding: 16px 0;
+  margin: 8px 0 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-soft);
+    font-size: 0.92rem;
+  }
+
+  svg { color: var(--accent); flex-shrink: 0; }
+}
+
+.description {
+  h2 {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: var(--text-soft);
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+}
+
+.related {
+  margin-top: 72px;
+
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+}
