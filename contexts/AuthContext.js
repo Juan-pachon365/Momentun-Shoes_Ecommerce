@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import Router from "next/router";
 import { supabase } from "@/lib/supabase";
 
 const AuthContext = createContext(null);
@@ -31,8 +32,12 @@ export function AuthProvider({ children }) {
       if (active) setLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
+      // Si el enlace de recuperación abre otra página (p. ej. el inicio), se lleva al usuario al formulario
+      if (event === "PASSWORD_RECOVERY" && Router.pathname !== "/nueva-contrasena") {
+        setTimeout(() => Router.replace("/nueva-contrasena"), 0);
+      }
       // No se llama a Supabase dentro del callback directamente (recomendación de supabase-js)
       setTimeout(() => loadProfile(newSession?.user?.id), 0);
     });
