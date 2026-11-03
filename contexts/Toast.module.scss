@@ -1,7 +1,7 @@
 .stack {
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  bottom: 90px; /* deja libre el botón del chat de ayuda */
   z-index: 100;
   display: flex;
   flex-direction: column;

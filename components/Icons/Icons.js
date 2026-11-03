@@ -112,3 +112,52 @@ export const IconEyeOff = (p) => (
     <path d="M3 3l18 18" />
   </svg>
 );
+
+export const IconChat = (p) => (
+  <svg {...base} {...p}>
+    <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z" />
+    <path d="M8.5 11h.01M12 11h.01M15.5 11h.01" strokeWidth="2.6" />
+  </svg>
+);
+
+export const IconSend = (p) => (
+  <svg {...base} {...p}>
+    <path d="M22 2 11 13" />
+    <path d="M22 2 15 22l-4-9-9-4z" />
+  </svg>
+);
+
+export const IconMail = (p) => (
+  <svg {...base} {...p}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m3 7 9 6 9-6" />
+  </svg>
+);
+
+export const IconClock = (p) => (
+  <svg {...base} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 2" />
+  </svg>
+);
+
+export const IconChevronDown = (p) => (
+  <svg {...base} {...p}>
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+);
+
+export const IconWhatsapp = (p) => (
+  <svg {...base} {...p}>
+    <path d="M3.5 20.5 5 15.6A8.5 8.5 0 1 1 8.4 19z" />
+    <path d="M9 8.5c0 3.6 2.9 6.5 6.5 6.5l1-1.6-2-1-1 .9a4.5 4.5 0 0 1-2.3-2.3l.9-1-1-2z" strokeWidth="1.4" />
+  </svg>
+);
+
+export const IconInstagram = (p) => (
+  <svg {...base} {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <path d="M17.5 6.5h.01" strokeWidth="2.6" />
+  </svg>
+);

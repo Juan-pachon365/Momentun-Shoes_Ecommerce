@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { useAddresses } from "@/hooks/useAddresses";
 import { Seo } from "@/components/Seo";
+import { AyudaPedido } from "@/components/Soporte";
 import { EmptyState } from "@/components/EmptyState";
 import { AddressCard } from "@/components/AddressCard";
 import { AddressForm } from "@/components/AddressForm";
@@ -172,6 +173,9 @@ export default function Carrito() {
           <p className={styles.secure}>
             <IconShield /> Pago procesado por Wompi (Bancolombia). Tarjeta, PSE, Nequi y más.
           </p>
+          <AyudaPedido
+            resumen={items.map((i) => `• ${i.name} · talla ${i.size} · x${i.quantity}`).join("\n")}
+          />
         </aside>
       </div>
     </div>
