@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { BIENVENIDA, CONTACTO, PREGUNTAS, SIN_RESPUESTA, buscarRespuesta, enlaceWhatsapp } from "@/lib/soporte";
+import { buscarRespuesta, enlaceWhatsapp, primerNombre } from "@/lib/soporte";
+import { useSoporte } from "@/hooks/useSoporte";
 import { IconChat, IconClose, IconSend, IconWhatsapp } from "@/components/Icons";
 import styles from "./Soporte.module.scss";
 
@@ -8,8 +9,16 @@ const msg = (de, texto, extra = {}) => ({ id: nextId++, de, texto, ...extra });
 
 /** Chat flotante de preguntas frecuentes. Las respuestas salen de lib/soporte.js */
 export function ChatBot() {
+  const datos = useSoporte();
+  const preguntas = datos?.preguntas || [];
+  const contactos = datos?.contactos || [];
   const [abierto, setAbierto] = useState(false);
-  const [mensajes, setMensajes] = useState(() => [msg("bot", BIENVENIDA)]);
+  const [mensajes, setMensajes] = useState([]);
+
+  // Mensaje de bienvenida, cuando ya se cargó desde el panel
+  useEffect(() => {
+    if (datos && mensajes.length === 0) setMensajes([msg("bot", datos.mensajes.welcome)]);
+  }, [datos, mensajes.length]);
   const [texto, setTexto] = useState("");
   const [escribiendo, setEscribiendo] = useState(false);
   const listaRef = useRef(null);
@@ -38,8 +47,8 @@ export function ChatBot() {
       setMensajes((m) => [
         ...m,
         encontrada
-          ? msg("bot", encontrada.respuesta)
-          : msg("bot", SIN_RESPUESTA, { contacto: true, consulta: pregunta }),
+          ? msg("bot", encontrada.answer)
+          : msg("bot", datos.mensajes.fallback, { contacto: true, consulta: pregunta }),
       ]);
     }, 650);
   };
@@ -47,13 +56,13 @@ export function ChatBot() {
   const enviar = (e) => {
     e.preventDefault();
     const t = texto.trim();
-    if (!t || escribiendo) return;
+    if (!t || escribiendo || !datos) return;
     setTexto("");
-    responder(t, buscarRespuesta(t));
+    responder(t, buscarRespuesta(t, preguntas));
   };
 
   const preguntados = new Set(mensajes.filter((m) => m.de === "yo").map((m) => m.texto));
-  const sugerencias = PREGUNTAS.filter((p) => !preguntados.has(p.pregunta));
+  const sugerencias = preguntas.filter((p) => !preguntados.has(p.question));
 
   return (
     <div className={styles.chatRoot}>
@@ -76,7 +85,7 @@ export function ChatBot() {
             {mensajes.map((m) => (
               <div key={m.id} className={m.de === "yo" ? styles.burbujaYo : styles.burbujaBot}>
                 <p>{m.texto}</p>
-                {m.contacto && <ContactoRapido consulta={m.consulta} />}
+                {m.contacto && <ContactoRapido consulta={m.consulta} contactos={contactos} />}
               </div>
             ))}
             {escribiendo && (
@@ -91,8 +100,8 @@ export function ChatBot() {
           {sugerencias.length > 0 && (
             <div className={styles.chips} ref={chipsRef}>
               {sugerencias.map((p) => (
-                <button key={p.pregunta} type="button" onClick={() => responder(p.pregunta, p)} disabled={escribiendo}>
-                  {p.pregunta}
+                <button key={p.id} type="button" onClick={() => responder(p.question, p)} disabled={escribiendo}>
+                  {p.question}
                 </button>
               ))}
             </div>
@@ -131,21 +140,28 @@ export function ChatBot() {
   );
 }
 
-function ContactoRapido({ consulta }) {
-  const wa = enlaceWhatsapp(`Hola, tengo una pregunta: ${consulta}`);
-  if (wa) {
-    return (
-      <a className={styles.waLink} href={wa} target="_blank" rel="noopener noreferrer">
-        <IconWhatsapp width={16} height={16} /> Hablar con {CONTACTO.asesor.split(" ")[0]}
-      </a>
-    );
-  }
-  if (CONTACTO.correo) {
-    return (
-      <a className={styles.waLink} href={`mailto:${CONTACTO.correo}`}>
-        Escribir a {CONTACTO.correo}
-      </a>
-    );
-  }
-  return null;
+function ContactoRapido({ consulta, contactos }) {
+  const conWhatsapp = contactos.filter((c) => c.whatsapp);
+  const conCorreo = contactos.filter((c) => !c.whatsapp && c.email);
+  if (!conWhatsapp.length && !conCorreo.length) return null;
+  return (
+    <div className={styles.contactosRapidos}>
+      {conWhatsapp.map((c) => (
+        <a
+          key={c.id}
+          className={styles.waLink}
+          href={enlaceWhatsapp(c.whatsapp, `Hola ${primerNombre(c.name)}, tengo una pregunta: ${consulta}`)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <IconWhatsapp width={16} height={16} /> Hablar con {primerNombre(c.name)}
+        </a>
+      ))}
+      {conCorreo.map((c) => (
+        <a key={c.id} className={styles.waLink} href={`mailto:${c.email}`}>
+          Escribir a {primerNombre(c.name)}
+        </a>
+      ))}
+    </div>
+  );
 }

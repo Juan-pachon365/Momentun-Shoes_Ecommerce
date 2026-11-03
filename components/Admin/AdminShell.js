@@ -19,6 +19,9 @@ const Icons = {
   zapato: (
     <svg {...ic}><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></svg>
   ),
+  ayuda: (
+    <svg {...ic}><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1v.5M12 16h.01" /></svg>
+  ),
   tienda: (
     <svg {...ic}><path d="M4 9l1.5-5h13L20 9" /><path d="M4 9h16v11H4z" /><path d="M9 20v-6h6v6" /></svg>
   ),
@@ -38,6 +41,7 @@ export const ADMIN_SECTIONS = [
   { id: "pedidos", label: "Pedidos", title: "Pedidos" },
   { id: "stock", label: "Zapatos y stock", title: "Zapatos y stock" },
   { id: "zapato", label: "Nuevo zapato", title: "Nuevo zapato" },
+  { id: "ayuda", label: "Chat y contacto", title: "Chat de ayuda y contacto" },
 ];
 
 export function AdminShell({ active, title, children }) {

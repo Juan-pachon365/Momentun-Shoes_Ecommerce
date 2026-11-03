@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { Seo } from "@/components/Seo";
 import { AdminShell, ADMIN_SECTIONS } from "@/components/Admin/AdminShell";
-import { ResumenTab, PedidosTab, StockTab, ProductoForm } from "@/components/Admin";
+import { ResumenTab, PedidosTab, StockTab, ProductoForm, SoporteTab } from "@/components/Admin";
 import styles from "@/components/Admin/Admin.module.scss";
 
 export default function Admin() {
@@ -47,6 +47,7 @@ export default function Admin() {
       {tab === "pedidos" && <PedidosTab />}
       {tab === "stock" && <StockTab />}
       {tab === "zapato" && <ProductoForm editarUid={editar} />}
+      {tab === "ayuda" && <SoporteTab />}
     </AdminShell>
   );
 }

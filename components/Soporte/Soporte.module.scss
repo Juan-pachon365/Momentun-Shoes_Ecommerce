@@ -368,3 +368,17 @@
 @media (prefers-reduced-motion: reduce) {
   .panel, .ayudaBody, .burbujaBot, .burbujaYo, .escribiendo i { animation: none; }
 }
+
+/* Varios asesores dentro del desplegable */
+.contacto + .contacto {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.contactosRapidos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  .waLink { margin-top: 8px; }
+}
