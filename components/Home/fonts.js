@@ -7,9 +7,9 @@ export const anton = Anton({
   display: "swap",
 });
 
+// Archivo es variable: un solo archivo cubre todos los grosores (400 a 900)
 export const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-body",
   display: "swap",
 });

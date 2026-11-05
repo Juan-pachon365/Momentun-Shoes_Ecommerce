@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { cdn, totalStock } from "@/lib/format";
+import { cdn, cdnSrcSet, totalStock } from "@/lib/format";
 import { Price } from "@/components/Price";
 import { WishlistButton } from "@/components/WishlistButton";
 import styles from "./CatalogCard.module.scss";
 
 const DIAS_NUEVO = 30;
+// Ancho aproximado de cada tarjeta: 2 columnas en celular, 3 en escritorio
+const SIZES = "(max-width: 900px) 50vw, (max-width: 1400px) 30vw, 420px";
 
 // Tarjeta del catálogo al estilo de las grandes marcas: foto protagonista,
 // segunda foto al pasar el mouse y poca información debajo.
@@ -34,10 +36,19 @@ export function CatalogCard({ product, priority = false }) {
         {product.cover ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className={styles.imgMain} src={cdn(product.cover, 700)} alt={product.name} loading={priority ? "eager" : "lazy"} />
+            <img
+              className={styles.imgMain}
+              src={cdn(product.cover, 720)}
+              srcSet={cdnSrcSet(product.cover)}
+              sizes={SIZES}
+              alt={product.name}
+              loading={priority ? "eager" : "lazy"}
+              fetchPriority={priority ? "high" : undefined}
+              decoding="async"
+            />
             {segunda && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img className={styles.imgAlt} src={cdn(segunda, 700)} alt="" aria-hidden="true" loading="lazy" />
+              <img className={styles.imgAlt} src={cdn(segunda, 720)} srcSet={cdnSrcSet(segunda)} sizes={SIZES} alt="" aria-hidden="true" loading="lazy" decoding="async" />
             )}
           </>
         ) : (

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { getAvailableSizes, getBrands, getCategories, getProducts, SORT_OPTIONS } from "@/lib/catalog";
-import { buildPriceRanges, filterByPrice, parsePriceRange, sortByFinalPrice } from "@/lib/catalogFilters";
+import { getBrands, getCategories, getProducts, SORT_OPTIONS } from "@/lib/catalog";
+import { applyFilters, availableSizes, parseFilters } from "@/lib/catalogFilters";
 import { Seo } from "@/components/Seo";
 import { CatalogCard } from "@/components/CatalogCard";
 import { EmptyState } from "@/components/EmptyState";
@@ -18,8 +18,14 @@ const IconFiltros = () => (
   </svg>
 );
 
-export default function Catalogo({ products, categories, brands, sizes, priceRanges, filters }) {
+export default function Catalogo({ allProducts, categories, brands }) {
   const router = useRouter();
+  // La página llega lista desde la caché de Vercel; los filtros se aplican aquí, sin volver al servidor
+  const filters = useMemo(() => parseFilters(router.isReady ? router.query : {}), [router.isReady, router.query]);
+  const { products, priceRanges } = useMemo(() => applyFilters(allProducts, filters), [allProducts, filters]);
+  const sizes = useMemo(() => availableSizes(allProducts), [allProducts]);
+  // Mientras el navegador lee la URL, no se muestra el catálogo completo para evitar un parpadeo
+  const cargandoFiltros = !router.isReady && typeof window !== "undefined" && window.location.search.length > 1;
   const [ocultos, setOcultos] = useState(false); // escritorio: ocultar barra de filtros
   const [panel, setPanel] = useState(false); // celular: panel de filtros a pantalla completa
 
@@ -34,7 +40,7 @@ export default function Catalogo({ products, categories, brands, sizes, priceRan
     const query = { ...router.query };
     if (value === undefined || value === null || value === "" || query[key] === String(value)) delete query[key];
     else query[key] = value;
-    router.push({ pathname: "/catalogo", query }, undefined, { scroll: false });
+    router.push({ pathname: "/catalogo", query }, undefined, { scroll: false, shallow: true });
   };
 
   const categoria = categories.find((c) => c.slug === filters.categoria);
@@ -160,7 +166,7 @@ export default function Catalogo({ products, categories, brands, sizes, priceRan
       <div className="container">
         {/* Accesos rápidos a categorías */}
         <nav className={styles.pills} aria-label="Categorías">
-          <Link href="/catalogo" className={`${styles.pill} ${!filters.categoria ? styles.pillActive : ""}`} scroll={false}>
+          <Link href="/catalogo" className={`${styles.pill} ${!filters.categoria ? styles.pillActive : ""}`} scroll={false} shallow>
             Todo
           </Link>
           {categories.map((c) => (
@@ -169,6 +175,7 @@ export default function Catalogo({ products, categories, brands, sizes, priceRan
               href={`/catalogo?categoria=${c.slug}`}
               className={`${styles.pill} ${filters.categoria === c.slug ? styles.pillActive : ""}`}
               scroll={false}
+              shallow
             >
               {c.title}
             </Link>
@@ -182,7 +189,7 @@ export default function Catalogo({ products, categories, brands, sizes, priceRan
                 {c.label} <IconClose />
               </button>
             ))}
-            <Link href="/catalogo" className={styles.clear} scroll={false}>
+            <Link href="/catalogo" className={styles.clear} scroll={false} shallow>
               Borrar filtros
             </Link>
           </div>
@@ -195,7 +202,7 @@ export default function Catalogo({ products, categories, brands, sizes, priceRan
             </aside>
           )}
 
-          <section className={styles.results} aria-live="polite">
+          <section className={styles.results} aria-live="polite" style={cargandoFiltros ? { visibility: "hidden" } : undefined}>
             {products.length > 0 ? (
               <div className={styles.grid}>
                 {products.map((p, i) => (
@@ -229,7 +236,7 @@ export default function Catalogo({ products, categories, brands, sizes, priceRan
           </div>
           <div className={styles.sheetFoot}>
             {chips.length > 0 && (
-              <Link href="/catalogo" className="btn btn-outline" scroll={false}>
+              <Link href="/catalogo" className="btn btn-outline" scroll={false} shallow>
                 Borrar
               </Link>
             )}
@@ -243,30 +250,14 @@ export default function Catalogo({ products, categories, brands, sizes, priceRan
   );
 }
 
-export async function getServerSideProps({ query }) {
-  const filters = {
-    categoria: typeof query.categoria === "string" ? query.categoria : "",
-    marca: typeof query.marca === "string" ? query.marca : "",
-    talla: typeof query.talla === "string" && /^\d+$/.test(query.talla) ? query.talla : "",
-    q: typeof query.q === "string" ? query.q.slice(0, 60) : "",
-    oferta: query.oferta === "1" ? "1" : "",
-    precio: typeof query.precio === "string" && parsePriceRange(query.precio) ? query.precio : "",
-    orden: typeof query.orden === "string" ? query.orden : "recientes",
-  };
-
+// El catálogo se genera una vez y Vercel lo sirve desde su caché (muy rápido).
+// Se actualiza solo cada 60 s, y al instante cuando guardas un zapato en el panel.
+export async function getStaticProps() {
   try {
-    const [todos, categories, brands, sizes] = await Promise.all([
-      getProducts({ ...filters, oferta: !!filters.oferta }),
-      getCategories(),
-      getBrands(),
-      getAvailableSizes(),
-    ]);
-    // Los rangos de precio se calculan con los demás filtros aplicados (sin el de precio)
-    const priceRanges = buildPriceRanges(todos);
-    const products = sortByFinalPrice(filterByPrice(todos, parsePriceRange(filters.precio)), filters.orden);
-    return { props: { products, categories, brands, sizes, priceRanges, filters } };
+    const [allProducts, categories, brands] = await Promise.all([getProducts(), getCategories(), getBrands()]);
+    return { props: { allProducts, categories, brands }, revalidate: 60 };
   } catch (error) {
     console.error(error);
-    return { props: { products: [], categories: [], brands: [], sizes: [], priceRanges: [], filters } };
+    return { props: { allProducts: [], categories: [], brands: [] }, revalidate: 10 };
   }
 }

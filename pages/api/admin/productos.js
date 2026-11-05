@@ -1,4 +1,4 @@
-import { requireAdmin, slugify } from "@/lib/adminAuth";
+import { refrescarTienda, requireAdmin, slugify } from "@/lib/adminAuth";
 
 const CAMPOS_LISTA =
   "id, uid, name, price, discount, description, cover, wallpaper, image_gallery, created_at, category_id, brand_id, category:categories(id, title, slug), brand:brands(id, name, slug), product_sizes(id, numero, stock)";
@@ -131,6 +131,7 @@ export default async function handler(req, res) {
         const { data: creado, error } = await admin.from("products").insert(fila).select("id, uid").single();
         if (error) throw error;
         await guardarTallas(admin, creado.id, tallas);
+        await refrescarTienda(res);
         return res.status(201).json({ producto: creado });
       }
 
@@ -140,6 +141,7 @@ export default async function handler(req, res) {
       const { data: actualizado, error } = await admin.from("products").update(fila).eq("id", id).select("id, uid").single();
       if (error) throw error;
       await guardarTallas(admin, id, tallas);
+      await refrescarTienda(res);
       return res.status(200).json({ producto: actualizado });
     }
 

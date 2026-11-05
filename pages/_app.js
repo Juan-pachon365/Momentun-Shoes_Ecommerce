@@ -6,6 +6,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { Layout } from "@/components/Layout";
+import { anton, archivo } from "@/components/Home/fonts";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -16,6 +17,14 @@ export default function App({ Component, pageProps }) {
       <AuthProvider>
         <WishlistProvider>
           <CartProvider>
+            {/* Fuentes alojadas en la propia página (next/font): sin pedirlas a Google en cada visita */}
+            <style jsx global>{`
+              :root {
+                --font-body: ${archivo.style.fontFamily};
+                --font: ${archivo.style.fontFamily}, system-ui, -apple-system, "Segoe UI", sans-serif;
+                --font-display: ${anton.style.fontFamily}, Impact, "Arial Narrow", sans-serif;
+              }
+            `}</style>
             <Head>
               <meta name="viewport" content="width=device-width, initial-scale=1" />
               <title>Momentum Shoes</title>
