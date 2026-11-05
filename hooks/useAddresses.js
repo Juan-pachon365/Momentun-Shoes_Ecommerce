@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
-const FIELDS = "id, title, name, address, house_apartment, locality, city, postal_code, phone, created_at";
+const FIELDS = "id, title, name, address, house_apartment, locality, city, city_code, postal_code, phone, created_at";
 
 export function useAddresses() {
   const { user } = useAuth();

@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CiudadSelect } from "@/components/Envio/CiudadSelect";
+import { buscarCiudadPorNombre, useCiudades } from "@/hooks/useCiudades";
 
 const EMPTY = {
   title: "",
@@ -7,6 +9,7 @@ const EMPTY = {
   house_apartment: "",
   locality: "",
   city: "Bogotá D.C.",
+  city_code: "11001000",
   postal_code: "",
   phone: "",
 };
@@ -17,10 +20,23 @@ export function AddressForm({ initial, onSubmit, onCancel, submitLabel = "Guarda
   const [sending, setSending] = useState(false);
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
+  const ciudades = useCiudades();
+
+  // Direcciones guardadas antes de la lista de ciudades: se intenta reconocer la ciudad escrita
+  useEffect(() => {
+    if (!ciudades || form.city_code) return;
+    const encontrada = buscarCiudadPorNombre(ciudades, form.city);
+    if (encontrada) setForm((f) => ({ ...f, city: encontrada.name, city_code: encontrada.dane_code }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ciudades]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if (!form.city_code) {
+      setError("Elige tu ciudad de la lista");
+      return;
+    }
     if (!/^[0-9+\s-]{7,15}$/.test(form.phone.trim())) {
       setError("Escribe un teléfono válido (solo números, 7 a 15 dígitos)");
       return;
@@ -67,7 +83,11 @@ export function AddressForm({ initial, onSubmit, onCancel, submitLabel = "Guarda
       <div className="field-row">
         <div className="field">
           <label htmlFor="a-city">Ciudad</label>
-          <input id="a-city" autoComplete="address-level2" required value={form.city} onChange={set("city")} />
+          <CiudadSelect
+            value={form.city_code}
+            onChange={(c) => setForm({ ...form, city: c?.name || "", city_code: c?.dane_code || "" })}
+          />
+          <small className="field-hint">¿No está tu ciudad? Escríbenos por el chat de ayuda.</small>
         </div>
         <div className="field">
           <label htmlFor="a-postal">Código postal (opcional)</label>

@@ -157,7 +157,7 @@ export default function ProductPage({ product, related }) {
 
           <ul className={styles.perks}>
             <li>
-              <IconTruck /> Envío gratis a toda Colombia
+              <IconTruck /> Envíos a toda Colombia: eliges la transportadora al pagar
             </li>
             <li>
               <IconShield /> Pago seguro con Wompi: tarjeta, PSE, Nequi y más

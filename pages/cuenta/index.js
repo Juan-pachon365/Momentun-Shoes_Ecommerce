@@ -86,7 +86,7 @@ function Orders() {
   useEffect(() => {
     supabase
       .from("orders")
-      .select("id, total_payment, status_payment, shipping_status, id_payment, address_shipping, products, created_at")
+      .select("id, total_payment, status_payment, shipping_status, shipping_carrier, shipping_service, shipping_cost, tracking_number, id_payment, address_shipping, products, created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => setOrders(data || []));

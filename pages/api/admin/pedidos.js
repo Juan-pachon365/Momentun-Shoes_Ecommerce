@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       let query = admin
         .from("orders")
-        .select("id, user_id, total_payment, id_payment, status_payment, shipping_status, address_shipping, products, created_at")
+        .select("id, user_id, total_payment, id_payment, status_payment, shipping_status, shipping_carrier, shipping_service, shipping_cost, tracking_number, address_shipping, products, created_at")
         .order("created_at", { ascending: false })
         .limit(300);
       const estado = req.query.estado;
@@ -46,20 +46,34 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "PATCH") {
-      const { id, shipping_status } = req.body || {};
-      if (!id || !SHIPPING_STATUS.includes(shipping_status)) {
-        return res.status(400).json({ error: "Estado de envío inválido" });
+      const { id, shipping_status, tracking_number } = req.body || {};
+      const cambios = {};
+      if (shipping_status !== undefined) {
+        if (!SHIPPING_STATUS.includes(shipping_status)) return res.status(400).json({ error: "Estado de envío inválido" });
+        cambios.shipping_status = shipping_status;
       }
-      const { data: pedido } = await admin.from("orders").select("status_payment").eq("id", id).maybeSingle();
+      if (tracking_number !== undefined) {
+        const guia = String(tracking_number || "").trim();
+        if (guia && !/^[A-Za-z0-9-]{4,60}$/.test(guia)) {
+          return res.status(400).json({ error: "El número de guía solo puede tener letras, números y guiones" });
+        }
+        cambios.tracking_number = guia || null;
+      }
+      if (!id || !Object.keys(cambios).length) return res.status(400).json({ error: "No hay cambios para guardar" });
+      const { data: pedido } = await admin.from("orders").select("status_payment, shipping_status").eq("id", id).maybeSingle();
       if (!pedido) return res.status(404).json({ error: "Pedido no encontrado" });
       if (pedido.status_payment !== "APPROVED") {
         return res.status(409).json({ error: "Solo se puede cambiar el envío de pedidos con pago aprobado" });
       }
+      // Al poner la guía, un pedido que se estaba preparando pasa a "Enviado"
+      if (cambios.tracking_number && !cambios.shipping_status && pedido.shipping_status === "PREPARANDO") {
+        cambios.shipping_status = "ENVIADO";
+      }
       const { data, error } = await admin
         .from("orders")
-        .update({ shipping_status })
+        .update(cambios)
         .eq("id", id)
-        .select("id, shipping_status")
+        .select("id, shipping_status, tracking_number")
         .single();
       if (error) throw error;
       return res.status(200).json({ pedido: data });

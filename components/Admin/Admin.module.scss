@@ -712,3 +712,38 @@ a.kpi:hover {
   width: 48px;
   height: 48px;
 }
+
+/* Transportadora y número de guía de cada pedido */
+.carrier {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  strong { color: var(--text); }
+}
+
+.guia {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  div { display: flex; gap: 8px; }
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--bg-deep);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    &:focus { outline: none; border-color: var(--accent); }
+  }
+  .btn, button { height: 38px; padding: 0 16px; }
+  a { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+}

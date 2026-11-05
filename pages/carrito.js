@@ -9,6 +9,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { useAddresses } from "@/hooks/useAddresses";
 import { Seo } from "@/components/Seo";
 import { AyudaPedido } from "@/components/Soporte";
+import { OpcionesEnvio, recotizarEnvio, useEnvioElegido } from "@/components/Envio";
 import { EmptyState } from "@/components/EmptyState";
 import { AddressCard } from "@/components/AddressCard";
 import { AddressForm } from "@/components/AddressForm";
@@ -20,6 +21,7 @@ export default function Carrito() {
   const { user, loading: authLoading } = useAuth();
   const { notify } = useToast();
   const [synced, setSynced] = useState(false);
+  const { seleccion: envio } = useEnvioElegido();
 
   // Al abrir el carrito, actualizar precios y stock desde Supabase
   useEffect(() => {
@@ -161,12 +163,12 @@ export default function Carrito() {
               </div>
             )}
             <div>
-              <dt>Envío</dt>
-              <dd className={styles.free}>Gratis</dd>
+              <dt>Envío{envio ? ` · ${envio.carrierName}` : ""}</dt>
+              <dd className={envio ? undefined : styles.pending}>{envio ? formatPrice(envio.price) : user ? "Elige transportadora" : "Según tu ciudad"}</dd>
             </div>
             <div className={styles.total}>
               <dt>Total</dt>
-              <dd>{formatPrice(total)}</dd>
+              <dd>{formatPrice(total + (envio?.price || 0))}</dd>
             </div>
           </dl>
           <CheckoutButton disabled={!synced} />
@@ -201,6 +203,7 @@ function useSelectedAddress() {
 
 function ShippingSelector() {
   const { addresses, loading, save } = useAddresses();
+  const { items } = useCart();
   const selected = useSelectedAddress();
   const [adding, setAdding] = useState(false);
 
@@ -240,6 +243,11 @@ function ShippingSelector() {
       <button className={styles.addAddress} onClick={() => setAdding(true)}>
         <IconPlus /> Nueva dirección
       </button>
+      <OpcionesEnvio
+        address={addresses.find((a) => a.id === selected)}
+        items={items}
+        onGuardarCiudad={(a, ciudad) => save({ city: ciudad.name, city_code: ciudad.dane_code }, a.id)}
+      />
     </div>
   );
 }
@@ -248,6 +256,7 @@ function CheckoutButton({ disabled }) {
   const { items } = useCart();
   const { user } = useAuth();
   const addressId = useSelectedAddress();
+  const { seleccion: envio } = useEnvioElegido();
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
 
@@ -265,12 +274,17 @@ function CheckoutButton({ disabled }) {
       setError("Agrega o selecciona una dirección de envío");
       return;
     }
+    if (!envio) {
+      setError("Elige la transportadora con la que quieres recibir tu pedido");
+      return;
+    }
     setSending(true);
     try {
       const { url } = await apiFetch("/api/checkout", {
         method: "POST",
         body: {
           addressId,
+          envio: envio.id,
           items: items.map((i) => ({ productId: i.productId, size: i.size, quantity: i.quantity })),
         },
       });
@@ -278,13 +292,14 @@ function CheckoutButton({ disabled }) {
     } catch (err) {
       setError(err.message);
       setSending(false);
+      if (/envío cambió/.test(err.message)) recotizarEnvio();
     }
   };
 
   return (
     <>
       {error && <div className="form-error">{error}</div>}
-      <button className="btn btn-primary btn-block" onClick={pay} disabled={disabled || sending}>
+      <button className="btn btn-primary btn-block" onClick={pay} disabled={disabled || sending || !envio}>
         {sending ? "Redirigiendo a Wompi..." : "Pagar con Wompi"}
       </button>
     </>

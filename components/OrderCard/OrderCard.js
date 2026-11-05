@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { cdn, formatDate, formatPrice, PAYMENT_STATUS } from "@/lib/format";
+import { cdn, formatDate, formatPrice, PAYMENT_STATUS, urlRastreo } from "@/lib/format";
 import { addressLines } from "@/components/AddressCard";
 import styles from "./OrderCard.module.scss";
 
@@ -63,6 +63,21 @@ export function OrderCard({ order }) {
           <span>
             {address.name} · {addressLines(address).join(" · ")}
           </span>
+          {order.shipping_carrier && (
+            <span className={styles.carrier}>
+              {order.shipping_carrier} · envío {formatPrice(order.shipping_cost)}
+              {order.tracking_number ? (
+                <>
+                  {" · "}Guía <b>{order.tracking_number}</b>{" "}
+                  <a href={urlRastreo(order.tracking_number)} target="_blank" rel="noopener noreferrer">
+                    Rastrear pedido
+                  </a>
+                </>
+              ) : (
+                order.status_payment === "APPROVED" && " · Te avisaremos el número de guía cuando lo despachemos"
+              )}
+            </span>
+          )}
         </footer>
       )}
     </article>

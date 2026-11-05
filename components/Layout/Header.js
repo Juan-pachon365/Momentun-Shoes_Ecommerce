@@ -42,7 +42,7 @@ export function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.announce}>
-        Envío gratis a toda Colombia · Paga seguro con Wompi
+        Envíos a toda Colombia · Paga seguro con Wompi
       </div>
       <div className={`container ${styles.bar}`}>
         <button

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { apiFetch } from "@/lib/apiClient";
-import { formatDate, formatPrice, PAYMENT_STATUS } from "@/lib/format";
+import { formatDate, formatPrice, PAYMENT_STATUS, urlRastreo } from "@/lib/format";
 import { addressLines } from "@/components/AddressCard";
 import { useToast } from "@/contexts/ToastContext";
 import styles from "./Admin.module.scss";
@@ -34,6 +34,18 @@ export function PedidosTab() {
     if (value) query[key] = value;
     else delete query[key];
     router.replace({ pathname: "/admin", query }, undefined, { scroll: false });
+  };
+
+  const guardarGuia = async (id, tracking_number) => {
+    try {
+      const { pedido } = await apiFetch("/api/admin/pedidos", { method: "PATCH", body: { id, tracking_number } });
+      setPedidos((prev) => prev.map((o) => (o.id === id ? { ...o, ...pedido } : o)));
+      notify(tracking_number ? "Guía guardada: el cliente ya puede rastrear su pedido" : "Guía eliminada", "success");
+      return true;
+    } catch (e) {
+      notify(e.message, "danger");
+      return false;
+    }
   };
 
   const cambiarEnvio = async (id, shipping_status) => {
@@ -150,6 +162,16 @@ export function PedidosTab() {
                     <span key={l}>{l}</span>
                   ))}
                   {o.id_payment && <small className={`muted ${styles.mono}`}>Wompi: {o.id_payment}</small>}
+                  {o.shipping_carrier && (
+                    <div className={styles.carrier}>
+                      <span className={styles.label}>Transportadora elegida</span>
+                      <strong>{o.shipping_carrier}</strong>
+                      <span>
+                        {o.shipping_service} · {formatPrice(o.shipping_cost)}
+                      </span>
+                      {o.status_payment === "APPROVED" && <GuiaInput pedido={o} onGuardar={guardarGuia} />}
+                    </div>
+                  )}
                 </div>
               </div>
             </article>
@@ -157,5 +179,42 @@ export function PedidosTab() {
         })}
       </div>
     </div>
+  );
+}
+
+function GuiaInput({ pedido, onGuardar }) {
+  const [valor, setValor] = useState(pedido.tracking_number || "");
+  const [guardando, setGuardando] = useState(false);
+  const cambiado = valor.trim() !== (pedido.tracking_number || "");
+  return (
+    <form
+      className={styles.guia}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setGuardando(true);
+        await onGuardar(pedido.id, valor.trim());
+        setGuardando(false);
+      }}
+    >
+      <label htmlFor={`guia-${pedido.id}`}>Número de guía</label>
+      <div>
+        <input
+          id={`guia-${pedido.id}`}
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          placeholder="Ej: 240012345678"
+          maxLength={60}
+          autoComplete="off"
+        />
+        <button className="btn btn-primary" disabled={guardando || !cambiado}>
+          {guardando ? "..." : "Guardar"}
+        </button>
+      </div>
+      {pedido.tracking_number && (
+        <a href={urlRastreo(pedido.tracking_number)} target="_blank" rel="noopener noreferrer">
+          Ver rastreo
+        </a>
+      )}
+    </form>
   );
 }

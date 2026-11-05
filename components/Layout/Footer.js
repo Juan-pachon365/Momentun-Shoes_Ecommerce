@@ -9,8 +9,8 @@ export function Footer() {
         <div>
           <IconTruck />
           <div>
-            <strong>Envío gratis</strong>
-            <span>A toda Colombia</span>
+            <strong>Envíos a toda Colombia</strong>
+            <span>Interrapidísimo, Servientrega y más</span>
           </div>
         </div>
         <div>

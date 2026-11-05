@@ -229,6 +229,7 @@
 .savings dd { color: var(--success); }
 
 .free { color: var(--success); }
+.pending { color: var(--text-muted); font-weight: 500; font-size: 0.9rem; }
 
 .total {
   border-top: 1px solid var(--border);
